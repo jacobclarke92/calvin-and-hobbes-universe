@@ -33,38 +33,51 @@ const renderer = autoDetectRenderer(
 const canvas = renderer.view;
 $app.append(canvas);
 
-
+// Create stage containers
 const stageWrapper = new Container();
 const stage = new Container();
 
+// Create particle arrays
 const stars = [];
 const shootingStars = [];
 
+// Called on page load
 function init() {
 
+	// Init fade in
 	$('#overlay').addClass('hide');
+
+	// Add stage to wrapper
 	stageWrapper.addChild(stage);
 
+	// Init regular stars
 	for(let i=0; i<500; i++) {
 		const star = createStar();
 		stage.addChild(star);
 		stars.push(star);
 	}
 
+	// Init shooting stars
 	for(let i=0; i<2; i++) {
 		const shootingStar = createShootingStar();
 		stage.addChild(shootingStar);
 		shootingStars.push(shootingStar);
 	}
 
+	// Start animation
 	animate();
 }
 
+// Creates a new star or reassigns an old one
 function createStar(star = new Container()) {
+
+	// Init graphics object if not created
 	if(!star.graphics) {
 		star.graphics = new Graphics();
 		star.addChild(star.graphics);
 	}
+
+	// Create fresh vars
 	star.radius = randomFloat(1, 10);
 	star.aimAlpha = randomFloat(0.5, 1);
 	star.alpha = 0;
@@ -72,6 +85,8 @@ function createStar(star = new Container()) {
 	star.scale.set(0.2 / getPixelDensity());
 	star.fallSpeed = randomFloat(0.2, 2);
 	star.position = {x: randomInt(0, screenWidth), y: randomInt(-50, screenHeight)};
+	
+	// Draw circle
 	star.graphics.cacheAsBitmap = false;
 	star.graphics.clear();
 	star.graphics.lineStyle(0, 0xFFFFFF, 1);
@@ -82,13 +97,18 @@ function createStar(star = new Container()) {
 	return star;
 }
 
+// Creates a new shooting star or reassigns an old one
 function createShootingStar(star = new Container()) {
+
+	// Init graphics object if not created
 	if(!star.graphics) {
 		star.graphics = new Graphics();
 		star.addChild(star.graphics);
 	}
+
+	// Create fresh vars
 	star.counter = 0;
-	star.resetTime = randomInt(100, 500);
+	star.resetTime = randomInt(200, 800);
 	star.speed = randomFloat(10, 15);
 	star.rotation = randomFloat(0, Math.PI);
 	star.position = {
@@ -96,7 +116,7 @@ function createShootingStar(star = new Container()) {
 		x: star.rotation > Math.PI/2 ? screenWidth : 0,
 	};
 
-	// draw gradient line
+	// Draw gradient line
 	star.graphics.cacheAsBitmap = false;
 	star.graphics.clear();
 	const dist = randomInt(-5, -25);
@@ -111,12 +131,15 @@ function createShootingStar(star = new Container()) {
 	return star;
 }
 
+// Checks if co-ordinate is outside offstage
 function isOutside(pos, minX, maxX, minY, maxY) {
 	return (pos.x < minX || pos.x > maxX || pos.y < minY || pos.y > maxY);
 }
 
+// Animation station baby
 function animate() {
 
+	// Iterative over regular stars and animate
 	for(let star of stars) {
 		star.position.y += star.fallSpeed;
 		if(star.fadeIn) {
@@ -128,6 +151,7 @@ function animate() {
 		}
 	}
 
+	// Iterate over shooting stars and animate
 	for(let star of shootingStars) {
 		star.position.x += Math.cos(star.rotation) * star.speed;
 		star.position.y += Math.sin(star.rotation) * star.speed;
@@ -138,15 +162,18 @@ function animate() {
 		}
 	}
 
+	// Render and repeat animation
 	renderer.render(stageWrapper);
 	window.requestAnimationFrame(animate);
 }
 
+// Called upon window resize, updates vars and renderer size
 function handleResize(width, height) {
 	screenWidth = width/getPixelDensity();
 	screenHeight = height/getPixelDensity();
 	renderer.resize(screenWidth, screenHeight);
 }
 
+// Add resize and onload callbacks
 addResizeCallback(handleResize);
 $(window).ready(init);

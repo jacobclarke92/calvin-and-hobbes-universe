@@ -14,11 +14,15 @@ import {
 	getRandomValueFromArray,
 } from './utils/mathUtils'
 
+// Set screen size
+let screenWidth = getScreenWidth()/getPixelDensity();
+let screenHeight = getScreenHeight()/getPixelDensity();
+
 // Init PIXI renderer
 const $app = $('#background');
 const renderer = autoDetectRenderer(
-	getScreenWidth()/getPixelDensity(), 
-	getScreenHeight()/getPixelDensity(), 
+	screenWidth, 
+	screenHeight, 
 	{
 		resolution: getPixelDensity(),
 		transparent: false,
@@ -38,6 +42,7 @@ const shootingStars = [];
 
 function init() {
 
+	$('#overlay').addClass('hide');
 	stageWrapper.addChild(stage);
 
 	for(let i=0; i<500; i++) {
@@ -53,8 +58,6 @@ function init() {
 	}
 
 	animate();
-	// for(let star of stars) { star.cacheAsBitmap = true }
-	// for(let star of shootingStars) { star.cacheAsBitmap = true }
 }
 
 function createStar(star = new Container()) {
@@ -66,9 +69,9 @@ function createStar(star = new Container()) {
 	star.aimAlpha = randomFloat(0.5, 1);
 	star.alpha = 0;
 	star.fadeIn = true;
-	star.scale.set(0.1);
+	star.scale.set(0.2 / getPixelDensity());
 	star.fallSpeed = randomFloat(0.2, 2);
-	star.position = {x: randomInt(0, getScreenWidth()/2), y: randomInt(-50, getScreenHeight()/2)};
+	star.position = {x: randomInt(0, screenWidth), y: randomInt(-50, screenHeight)};
 	star.graphics.cacheAsBitmap = false;
 	star.graphics.clear();
 	star.graphics.lineStyle(0, 0xFFFFFF, 1);
@@ -89,8 +92,8 @@ function createShootingStar(star = new Container()) {
 	star.speed = randomFloat(10, 15);
 	star.rotation = randomFloat(0, Math.PI);
 	star.position = {
-		y: randomInt(-50, getScreenHeight()/4), 
-		x: star.rotation > Math.PI/2 ? getScreenWidth()/2 : 0,
+		y: randomInt(-50, screenHeight), 
+		x: star.rotation > Math.PI/2 ? screenWidth : 0,
 	};
 
 	// draw gradient line
@@ -114,16 +117,13 @@ function isOutside(pos, minX, maxX, minY, maxY) {
 
 function animate() {
 
-	const screenWidth = getScreenWidth();
-	const screenHeight = getScreenHeight();
-
 	for(let star of stars) {
 		star.position.y += star.fallSpeed;
 		if(star.fadeIn) {
 			if(star.alpha < star.aimAlpha) star.alpha += 0.05;
 			else star.fadeIn = false;
 		}else{
-			if(star.alpha > 0) star.alpha -= 0.05;
+			if(star.alpha > 0) star.alpha -= 0.02;
 			else createStar(star);
 		}
 	}
@@ -143,10 +143,9 @@ function animate() {
 }
 
 function handleResize(width, height) {
-	renderer.resize(
-		width/getPixelDensity(), 
-		height/getPixelDensity()
-	);
+	screenWidth = width/getPixelDensity();
+	screenHeight = height/getPixelDensity();
+	renderer.resize(screenWidth, screenHeight);
 }
 
 addResizeCallback(handleResize);

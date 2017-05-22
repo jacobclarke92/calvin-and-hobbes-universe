@@ -20,16 +20,15 @@ let screenHeight = getScreenHeight()/getPixelDensity();
 
 // Init PIXI renderer
 const $app = $('#background');
-const renderer = autoDetectRenderer(
-	screenWidth, 
-	screenHeight, 
-	{
-		resolution: getPixelDensity(),
-		transparent: false,
-		backgroundColor: 0x010006,
-		antialias: true,
-	}
-);
+const renderer = autoDetectRenderer({
+	width: screenWidth, 
+	height: screenHeight, 
+	resolution: getPixelDensity(),
+	transparent: false,
+	backgroundColor: 0x010006,
+	antialias: true,
+	// forceCanvas: true, // my laptop gpu is fucked
+});
 const canvas = renderer.view;
 $app.append(canvas);
 
@@ -75,25 +74,22 @@ function createStar(star = new Container()) {
 	if(!star.graphics) {
 		star.graphics = new Graphics();
 		star.addChild(star.graphics);
+		// Draw circle
+		star.graphics.lineStyle(0, 0xFFFFFF, 1);
+		star.graphics.beginFill(0xFFFFFF);
+		star.graphics.drawCircle(10, 0, 10);
+		star.graphics.endFill();
+		star.graphics.cacheAsBitmap = true;
 	}
 
 	// Create fresh vars
-	star.radius = randomFloat(1, 10);
 	star.aimAlpha = randomFloat(0.5, 1);
 	star.alpha = 0;
 	star.fadeIn = true;
-	star.scale.set(0.2 / getPixelDensity());
+	star.scale.set(randomFloat(0.1, 1)*0.2 / getPixelDensity());
 	star.fallSpeed = randomFloat(0.2, 2);
 	star.position = {x: randomInt(0, screenWidth), y: randomInt(-50, screenHeight)};
 	
-	// Draw circle
-	star.graphics.cacheAsBitmap = false;
-	star.graphics.clear();
-	star.graphics.lineStyle(0, 0xFFFFFF, 1);
-	star.graphics.beginFill(0xFFFFFF);
-	star.graphics.drawCircle(star.radius, 0, star.radius);
-	star.graphics.endFill();
-	star.graphics.cacheAsBitmap = true;
 	return star;
 }
 

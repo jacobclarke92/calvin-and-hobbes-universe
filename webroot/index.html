@@ -11,6 +11,7 @@
         <main id="main">
             <div id="background"></div>
             <div id="foreground"></div>
+            <div id="overlay"></div>
         </main>
         <style type="text/css">
         
@@ -19,8 +20,9 @@
             }
 
             #main,
-            #background,
-            #foreground {
+            #overlay,
+            #foreground,
+            #background {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -28,7 +30,29 @@
                 height: 100%;
             }
 
+            #main {
+                overflow: hidden;
+            }
+
+            #overlay {
+                background-color: #010006;
+                opacity: 1;
+                transition: opacity 3.5s ease-out;
+                -webkit-transition: opacity 3.5s ease-out;
+            }
+
+            #overlay.hide {
+                opacity: 0;
+            }
+
             #foreground {
+                left: 50%;
+                width: 100vw;
+                height: 100vh;
+                min-width: 800px;
+                transform: translateX(-50%);
+                -ms-transform: translateX(-50%);
+                -webkit-transform: translateX(-50%);
                 background-image: url('assets/calvin-hobbs-nightsky.png');
                 background-repeat: no-repeat;
                 background-position: center bottom;

@@ -37,8 +37,6 @@ const stars = [];
 const shootingStars = [];
 
 function init() {
-	console.log('Hello world');
-	console.log($app);
 
 	stageWrapper.addChild(stage);
 
@@ -55,24 +53,37 @@ function init() {
 	}
 
 	animate();
+	// for(let star of stars) { star.cacheAsBitmap = true }
+	// for(let star of shootingStars) { star.cacheAsBitmap = true }
 }
 
-function createStar(star = new Graphics()) {
-	star.radius = randomFloat(0.05, 0.8);
+function createStar(star = new Container()) {
+	if(!star.graphics) {
+		star.graphics = new Graphics();
+		star.addChild(star.graphics);
+	}
+	star.radius = randomFloat(1, 10);
 	star.aimAlpha = randomFloat(0.5, 1);
 	star.alpha = 0;
 	star.fadeIn = true;
+	star.scale.set(0.1);
 	star.fallSpeed = randomFloat(0.2, 2);
 	star.position = {x: randomInt(0, getScreenWidth()/2), y: randomInt(-50, getScreenHeight()/2)};
-	star.clear();
-	star.lineStyle(0, 0xFFFFFF, 1);
-	star.beginFill(0xFFFFFF);
-	star.drawCircle(star.radius, 0, star.radius);
-	star.endFill();
+	star.graphics.cacheAsBitmap = false;
+	star.graphics.clear();
+	star.graphics.lineStyle(0, 0xFFFFFF, 1);
+	star.graphics.beginFill(0xFFFFFF);
+	star.graphics.drawCircle(star.radius, 0, star.radius);
+	star.graphics.endFill();
+	star.graphics.cacheAsBitmap = true;
 	return star;
 }
 
-function createShootingStar(star = new Graphics()) {
+function createShootingStar(star = new Container()) {
+	if(!star.graphics) {
+		star.graphics = new Graphics();
+		star.addChild(star.graphics);
+	}
 	star.counter = 0;
 	star.resetTime = randomInt(100, 500);
 	star.speed = randomFloat(10, 15);
@@ -81,17 +92,19 @@ function createShootingStar(star = new Graphics()) {
 		y: randomInt(-50, getScreenHeight()/4), 
 		x: star.rotation > Math.PI/2 ? getScreenWidth()/2 : 0,
 	};
-	star.clear();
 
 	// draw gradient line
+	star.graphics.cacheAsBitmap = false;
+	star.graphics.clear();
 	const dist = randomInt(-5, -25);
 	let currentDist = 0;
 	for(let i=0; i<10; i++) {
-		star.lineStyle(1, 0xFFFFFF, (1 - (i/10)) / 2);
-		star.moveTo(currentDist, 0);
+		star.graphics.lineStyle(1, 0xFFFFFF, (1 - (i/10)) / 2);
+		star.graphics.moveTo(currentDist, 0);
 		currentDist += dist;
-		star.lineTo(currentDist, 0);
+		star.graphics.lineTo(currentDist, 0);
 	}
+	star.graphics.cacheAsBitmap = true;
 	return star;
 }
 

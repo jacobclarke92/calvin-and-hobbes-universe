@@ -35,6 +35,14 @@ const auroraColors = [
 	0xe594e7
 ];
 
+// Init DOM elements
+const $audio = $('#audio-toggle');
+const $fullscreen = $('#fullscreen-toggle');
+let fullscreen = false;
+let muted = false;
+let audio = null;
+const maxVolume = 0.7;
+
 // Set screen size
 let screenWidth = getScreenWidth()/getPixelDensity();
 let screenHeight = getScreenHeight()/getPixelDensity();
@@ -64,10 +72,36 @@ const shootingStars = [];
 const auroras = [];
 
 function init() {
-	loader.once('complete', (loader, resources) => initScene());
+	loader.once('complete', (loader, resources) => {
+		initScene();
+		audio = new Audio('assets/tommib-help-buss.mp3');
+		audio.volume = maxVolume;
+		audio.addEventListener('ended', () => {
+			audio.currentTime = 0;
+			audio.play();
+		}, false);
+		audio.play();
+	});
 	loader.add('aurora1', 'assets/aurora1.png');
 	loader.add('noise', 'assets/noise.jpg');
 	loader.load();
+
+	$audio.on('click', () => {
+		muted = !muted;
+		$audio.find('use').attr('xlink:href', muted ? '#mute' : '#sound');
+	});
+
+	$fullscreen.on('click', () => {
+		fullscreen = !fullscreen;
+		$fullscreen.find('use').attr('xlink:href', fullscreen ? '#fullscreen-exit' : '#fullscreen');
+		if(fullscreen) {
+			const requestMethod = document.documentElement.requestFullScreen || document.documentElement.webkitRequestFullScreen || document.documentElement.mozRequestFullScreen || document.documentElement.msRequestFullScreen;
+			if (requestMethod) requestMethod.call(document.documentElement);
+		}else{
+			const requestMethod = document.exitFullscreen || document.webkitExitFullscreen || document.mozExitFullscreen || document.msExitFullscreen;
+			if (requestMethod) requestMethod.call(document);
+		}
+	});
 }
 
 // Called once assets are loaded
@@ -81,7 +115,7 @@ function initScene() {
 	stageWrapper.addChild(stage);
 
 	// Init aurora patches
-	for(let i=0; i<3; i ++) {
+	for(let i=0; i<7; i ++) {
 		const aurora = createAurora();
 		aurorasContainer.addChild(aurora);
 		auroras.push(aurora);
@@ -249,6 +283,17 @@ function isOutside(pos, minX, maxX, minY, maxY) {
 // Animation station baby
 function animate(t) {
 	const time = (t/500);
+
+	// Handle audio 
+	if(audio) {
+		if(muted) {
+			if(audio.volume > 0) audio.volume = Math.max(0, audio.volume - 0.02);
+			else if(!audio.paused) audio.pause();
+		}else if(!muted) {
+			if(audio.paused) audio.play();
+			else if(audio.volume < maxVolume) audio.volume += 0.02;
+		}
+	}
 
 	// This is used to scale some filter effects to account for mobile etc.
 	const widthModifier = Math.max((screenWidth / 1000), 0.8);

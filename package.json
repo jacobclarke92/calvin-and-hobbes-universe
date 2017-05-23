@@ -1,13 +1,12 @@
 {
-  "name": "january-shapes",
+  "name": "calvin-and-hobbes-in-space",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch",
     "watch": "webpack --watch",
-    "deploy": "webpack -p"
+    "deploy": "webpack -p --config=webpack.production.config.js"
   },
   "author": "",
   "license": "ISC",

@@ -8,7 +8,7 @@ module.exports = {
 		scripts: ['./scripts/index.js'],
 	},
 	output: {
-		path: path.join(__dirname, 'webroot', 'dist'),
+		path: path.join(__dirname, 'dist'),
 		filename: '[name].js',
 	},
 	plugins: [

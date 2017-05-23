@@ -100,7 +100,7 @@ function initScene() {
 	aurorasContainer.displacementFilter = new DisplacementFilter(aurorasContainer.displacementSprite);
 	aurorasContainer.displacementFilter.scale.x = 50;
 	aurorasContainer.displacementFilter.scale.y = 50;
-	aurorasContainer.displacementFilter.padding = 50;
+	aurorasContainer.displacementFilter.padding = 100;
 
 	// Apply filters
 	aurorasContainer.filters = [
@@ -263,7 +263,7 @@ function animate(t) {
 
 		// Fade in an out entire patch
 		if(aurora.fadeIn) {
-			if(aurora.alpha < 0.75) aurora.alpha += 0.01;
+			if(aurora.alpha < 0.75) aurora.alpha += 0.005;
 			else if(--aurora.showCounter <= 0) aurora.fadeIn = false;
 		}else{
 			if(aurora.alpha > 0) aurora.alpha -= 0.005;
